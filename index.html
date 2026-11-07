@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hý Thủy — Digital Water Puppet Theatre</title>
+<meta name="description" content="An interactive 3D water puppet theatre inspired by Vietnamese múa rối nước. Play a puppet yourself or write a story and watch the puppets perform it.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700&family=Noto+Serif:ital,wght@0,600;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"
+  }
+}
+</script>
+</head>
+<body>
+  <canvas id="stage-canvas" aria-label="3D water puppet stage" tabindex="-1"></canvas>
+
+  <!-- Loading -->
+  <div id="loading" class="overlay overlay--solid" role="status" aria-live="polite">
+    <div class="loading-box">
+      <div class="loading-ripple" aria-hidden="true"><span></span><span></span><span></span></div>
+      <p class="loading-title">Building the stage…</p>
+      <p id="loading-text" class="loading-sub">Đang dựng sân khấu</p>
+    </div>
+  </div>
+
+  <!-- Fallback when WebGL / modules fail -->
+  <div id="fallback" class="overlay overlay--solid" hidden>
+    <div class="panel">
+      <h2>The 3D stage could not start</h2>
+      <p id="fallback-reason">Your browser could not create a WebGL context, or the 3D library failed to load.</p>
+      <p>Try a recent desktop version of Chrome, Edge, Firefox or Safari, check your internet connection, and make sure hardware acceleration is turned on.</p>
+      <button class="btn btn--primary" type="button" onclick="location.reload()">Try again</button>
+    </div>
+  </div>
+
+  <!-- ============================== Landing: about water puppetry ============================== -->
+  <div id="landing" class="landing" hidden>
+    <header class="landing-nav">
+      <span class="brand">HÝ THỦY</span>
+      <div class="nav-actions">
+        <button class="icon-btn js-sound" type="button" aria-pressed="true"><span class="ico" aria-hidden="true">♪</span><span class="lbl">Sound on</span></button>
+        <button class="btn btn--primary btn--sm js-enter" type="button">Enter the theatre</button>
+      </div>
+    </header>
+
+    <section class="hero" aria-labelledby="landing-title">
+      <p class="eyebrow">Hý Thủy · a digital water puppet theatre</p>
+      <h1 id="landing-title">Water Puppetry</h1>
+      <p class="subtitle">Múa Rối Nước</p>
+      <p class="lede">Hý Thủy (戲水) means “playing in the water”, capturing the joy and playfulness of movement on the water. Inspired by Vietnam's traditional water puppetry, Hý Thủy is an interactive digital stage where you can explore the art of water puppetry, discover its characters, and bring wooden puppets to life through your own performances.</p>
+      <div class="landing-actions">
+        <button class="btn btn--primary btn--lg js-enter" type="button">Enter the theatre</button>
+        <a class="btn btn--ghost" href="#about">What is water puppetry? ↓</a>
+      </div>
+    </section>
+
+    <section id="about" class="landing-section" aria-labelledby="about-title">
+      <div class="section-inner prose">
+        <p class="eyebrow">The art form</p>
+        <h2 id="about-title">What is water puppetry?</h2>
+        <p>Water puppetry, <em>múa rối nước</em> in Vietnamese, is a folk theatre where the stage is a pool of water. Lacquered wooden puppets glide, spin and splash across the surface. The puppeteers stand hidden in the water behind a bamboo blind and move them with long rods and strings under the surface, to live folk music and drums.</p>
+        <h3>Where does it come from?</h3>
+        <p>It grew up in the villages of the Red River Delta in northern Vietnam, where life revolves around ponds and flooded rice fields. Villagers performed it at festivals, with scenes of farming, fishing, children at play and legendary creatures such as the dragon and the phoenix.</p>
+      </div>
+    </section>
+
+    <section class="landing-final">
+      <h2>Step behind the blind.</h2>
+      <p class="section-lede center">Play a puppet yourself, or write a story and watch the puppets perform it.</p>
+      <button class="btn btn--primary btn--lg js-enter" type="button">Enter the theatre</button>
+      <p class="hint">Play with a keyboard, or with touch controls on a tablet. Turn your sound on for the music.</p>
+    </section>
+  </div>
+
+  <!-- Mode choice -->
+  <section id="modes" class="overlay overlay--dim" hidden aria-labelledby="modes-title">
+    <div class="panel panel--wide">
+      <h2 id="modes-title">How would you like to perform?</h2>
+      <div class="mode-grid">
+        <button id="mode-play" class="mode-card" type="button">
+          <span class="mode-ico" aria-hidden="true">🎮</span>
+          <span class="mode-title">Be the puppeteer</span>
+          <span class="mode-desc">Choose a puppet and move it yourself with the keyboard or on-screen controls. A short tutorial shows you how.</span>
+        </button>
+        <button id="mode-story" class="mode-card" type="button">
+          <span class="mode-ico" aria-hidden="true">📜</span>
+          <span class="mode-title">Tell a story</span>
+          <span class="mode-desc">Type a short script and the puppets act it out on the water, with music to match the mood.</span>
+        </button>
+      </div>
+      <div class="row row--end"><button id="btn-modes-back" class="btn btn--ghost" type="button">Back</button></div>
+    </div>
+  </section>
+
+  <!-- Puppet selection -->
+  <section id="select" class="overlay overlay--dim" hidden aria-labelledby="select-title">
+    <div class="panel panel--wide">
+      <h2 id="select-title">Choose your puppet</h2>
+      <p class="muted">Each puppet has its own way of moving and its own signature move on <kbd>E</kbd>.</p>
+      <div id="puppet-cards" class="cards" role="list"></div>
+      <div class="music-pick" data-context="play" role="radiogroup" aria-label="Music"></div>
+      <div class="row row--end">
+        <button id="btn-select-back" class="btn btn--ghost" type="button">Back</button>
+        <button id="btn-skip-tutorial" class="btn" type="button" disabled>Skip tutorial</button>
+        <button id="btn-begin-tutorial" class="btn btn--primary" type="button" disabled>Learn the moves</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Story editor -->
+  <section id="story-editor" class="overlay overlay--dim" hidden aria-labelledby="story-title">
+    <div class="panel panel--wide story-panel">
+      <h2 id="story-title">Tell a story</h2>
+      <p class="muted">Write a few short sentences: who does what, and to whom. The puppets act it out and the music follows the mood (a fight gets battle drums, a night scene gets a quiet tune). English or Vietnamese both work.</p>
+      <div class="story-help">
+        <div><strong>Characters:</strong> <span id="story-chars"></span></div>
+        <div><strong>Actions:</strong> appear · swim · jump · dive · hide · rise · greet / bow · spin · dance / splash / spray · fight · go to / visit … · hold hands with … · love / hug · forbid / scold · cry · laugh · ride … · fly to the sky · leave</div>
+        <div><strong>Linking words:</strong> then · but · and · they · everyone (rồi · nhưng · họ · tất cả)</div>
+      </div>
+      <div class="examples" role="group" aria-label="Example stories"><span class="muted">Try an example:</span></div>
+      <label for="story-text" class="sr-only">Your story</label>
+      <textarea id="story-text" rows="6" placeholder="e.g. The dragon appears and swims around. The girl splashes the boy! The dragon and the phoenix fight. Everyone bows."></textarea>
+      <p id="story-hint" class="story-hint" aria-live="polite"></p>
+      <div class="music-pick" data-context="story" role="radiogroup" aria-label="Music"></div>
+      <div class="row row--end">
+        <button id="btn-story-back" class="btn btn--ghost" type="button">Back</button>
+        <button id="btn-story-play" class="btn btn--primary" type="button" disabled>Perform the story</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- How to play -->
+  <dialog id="dlg-howto" aria-labelledby="howto-title">
+    <h2 id="howto-title">How to Play</h2>
+    <p>You are the hidden puppeteer. Move your puppet across the water, make it rise and sink, and string the moves together into a little scene.</p>
+    <h3>Move</h3>
+    <ul class="keylist">
+      <li><span class="keys"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span> Glide across the water (hold)</li>
+      <li><span class="keys"><kbd>↑</kbd><kbd>↓</kbd></span> Rise / sink</li>
+      <li><span class="keys"><kbd>←</kbd><kbd>→</kbd></span> Turn</li>
+    </ul>
+    <h3>Play</h3>
+    <ul class="keylist">
+      <li><span class="keys"><kbd class="kbd-wide">Space</kbd></span> Jump (spins if you are moving)</li>
+      <li><span class="keys"><kbd>Q</kbd></span> Greet</li>
+      <li><span class="keys"><kbd>E</kbd></span> Signature move</li>
+      <li><span class="keys"><kbd>F</kbd></span> Dive under and come back up</li>
+    </ul>
+    <p class="muted">Reset, sound and pause are the buttons at the top of the screen.</p>
+    <form method="dialog" class="row row--end"><button class="btn btn--primary">Got it</button></form>
+  </dialog>
+
+  <!-- HUD -->
+  <div id="hud" hidden>
+    <div class="hud-top">
+      <div class="hud-title">
+        <span>Hý Thủy</span>
+        <span id="hud-mode" class="badge">Tutorial</span>
+      </div>
+      <div class="hud-buttons" role="toolbar" aria-label="Show controls">
+        <button id="btn-reset" class="hud-btn" type="button"><span aria-hidden="true">↺</span><span class="lbl">Reset</span></button>
+        <button class="hud-btn js-sound" type="button" aria-pressed="true"><span class="ico" aria-hidden="true">♪</span><span class="lbl">Sound on</span></button>
+        <button id="btn-pause" class="hud-btn" type="button"><span aria-hidden="true">❚❚</span><span class="lbl">Pause</span></button>
+      </div>
+    </div>
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <div id="tutorial" class="tutorial" hidden aria-live="polite">
+      <div class="tutorial-step">
+        <p id="tut-count" class="tut-count">Step 1 of 8</p>
+        <p id="tut-text" class="tut-text"></p>
+        <div id="tut-keys" class="tut-keys"></div>
+        <div class="tut-progress" aria-hidden="true"><span id="tut-bar"></span></div>
+      </div>
+      <div class="row">
+        <button id="btn-tut-skip" class="btn btn--ghost btn--sm" type="button">Skip tutorial</button>
+        <button id="btn-tut-next" class="btn btn--primary btn--sm" type="button" hidden>Start performing</button>
+      </div>
+    </div>
+
+    <aside id="keyguide" class="keyguide" aria-label="Keyboard guide">
+      <button id="btn-keyguide" class="keyguide-toggle" type="button" aria-expanded="true">Keys</button>
+      <div class="keyguide-body">
+        <div class="kg-group">
+          <div class="kg-wasd">
+            <kbd data-key="KeyW">W</kbd>
+            <kbd data-key="KeyA">A</kbd><kbd data-key="KeyS">S</kbd><kbd data-key="KeyD">D</kbd>
+          </div>
+          <span class="kg-label">Glide</span>
+        </div>
+        <div class="kg-group">
+          <div class="kg-wasd">
+            <kbd data-key="ArrowUp">↑</kbd>
+            <kbd data-key="ArrowLeft">←</kbd><kbd data-key="ArrowDown">↓</kbd><kbd data-key="ArrowRight">→</kbd>
+          </div>
+          <span class="kg-label">Rise · Sink · Turn</span>
+        </div>
+        <div class="kg-group kg-actions">
+          <div><kbd data-key="Space" class="kbd-wide">Space</kbd> Jump</div>
+          <div><kbd data-key="KeyQ">Q</kbd> Greet</div>
+          <div><kbd data-key="KeyE">E</kbd> Signature</div>
+          <div><kbd data-key="KeyF">F</kbd> Dive</div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Touch controls (tablets) -->
+    <div id="touch-controls" class="touch-controls" hidden>
+      <!-- Left thumb: moving -->
+      <div class="touch-left" role="group" aria-label="Move">
+        <div class="turn-row">
+          <div class="tctl"><button type="button" class="tbtn tbtn--sm" data-touch-key="ArrowLeft" aria-label="Turn left"><svg viewBox="0 0 24 24"><path d="M4 4v5h5"/><path d="M4.7 9A8 8 0 1 1 6 16.5"/></svg></button></div>
+          <span class="tlabel">Turn</span>
+          <div class="tctl"><button type="button" class="tbtn tbtn--sm" data-touch-key="ArrowRight" aria-label="Turn right"><svg viewBox="0 0 24 24"><path d="M20 4v5h-5"/><path d="M19.3 9A8 8 0 1 0 18 16.5"/></svg></button></div>
+        </div>
+        <div class="joystick" role="application" aria-label="Glide joystick: drag to move the puppet">
+          <div class="joystick-ring" aria-hidden="true"></div>
+          <div class="joystick-knob" aria-hidden="true"></div>
+        </div>
+        <span class="tlabel">Glide</span>
+      </div>
+
+      <!-- Right thumb: height + actions -->
+      <div class="touch-right">
+        <div class="rocker" role="group" aria-label="Height">
+          <button type="button" class="rocker-btn" data-touch-key="ArrowUp" aria-label="Rise"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg><span>Rise</span></button>
+          <button type="button" class="rocker-btn" data-touch-key="ArrowDown" aria-label="Sink"><span>Sink</span><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+        </div>
+        <div class="diamond" role="group" aria-label="Actions">
+          <div class="tctl d-top"><button type="button" class="tbtn tbtn--gold" data-touch-key="KeyE" aria-label="Signature move"><svg viewBox="0 0 24 24"><path d="M12 3l2.1 5.9L20 11l-5.9 2.1L12 19l-2.1-5.9L4 11l5.9-2.1z"/></svg></button><span class="tlabel">Signature</span></div>
+          <div class="tctl d-left"><button type="button" class="tbtn" data-touch-key="KeyQ" aria-label="Greet"><svg viewBox="0 0 24 24"><path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12M11 11V5a1.5 1.5 0 0 1 3 0v6M14 11V6.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-.5a5 5 0 0 1-4.1-2.2L4.3 14.6a1.5 1.5 0 0 1 2.4-1.8L8 14.5"/></svg></button><span class="tlabel">Greet</span></div>
+          <div class="tctl d-right"><button type="button" class="tbtn" data-touch-key="KeyF" aria-label="Dive"><svg viewBox="0 0 24 24"><path d="M12 3v10M7.5 9l4.5 4.5L16.5 9"/><path d="M3 19c1.5-1.2 3-1.2 4.5 0s3 1.2 4.5 0 3-1.2 4.5 0 3 1.2 4.5 0"/></svg></button><span class="tlabel">Dive</span></div>
+          <div class="tctl d-bottom"><button type="button" class="tbtn tbtn--jump" data-touch-key="Space" aria-label="Jump"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M3 20c1.5-1.2 3-1.2 4.5 0s3 1.2 4.5 0 3-1.2 4.5 0 3 1.2 4.5 0"/></svg></button><span class="tlabel">Jump</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Story finished -->
+  <section id="story-end" class="overlay overlay--dim" hidden aria-labelledby="story-end-title">
+    <div class="panel">
+      <h2 id="story-end-title">The End <span class="vi-sub">· Hết</span></h2>
+      <p class="muted">The puppets take a bow behind the blind.</p>
+      <div class="stack">
+        <button id="btn-story-again" class="btn btn--primary" type="button">Play it again</button>
+        <button id="btn-story-edit" class="btn" type="button">Edit the story</button>
+        <button id="btn-story-modes" class="btn" type="button">Choose another mode</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pause -->
+  <section id="pause" class="overlay overlay--dim" hidden aria-labelledby="pause-title">
+    <div class="panel">
+      <h2 id="pause-title">Paused</h2>
+      <p class="muted">The water is holding its breath.</p>
+      <div class="stack">
+        <button id="btn-resume" class="btn btn--primary" type="button">Resume</button>
+        <button id="btn-pause-tutorial" class="btn js-play-only" type="button">Replay tutorial</button>
+        <button id="btn-pause-howto" class="btn js-play-only" type="button">How to Play</button>
+        <button id="btn-pause-select" class="btn js-play-only" type="button">Change puppet</button>
+        <button id="btn-pause-story" class="btn js-story-only" type="button">Edit the story</button>
+        <button id="btn-pause-modes" class="btn" type="button">Choose another mode</button>
+        <button id="btn-pause-home" class="btn" type="button">Back to the intro</button>
+      </div>
+    </div>
+  </section>
+
+  <noscript><div class="overlay overlay--solid"><div class="panel"><h2>JavaScript is required</h2><p>This interactive 3D theatre needs JavaScript and WebGL.</p></div></div></noscript>
+
+  <script>
+    window.__bootTimer = setTimeout(function () {
+      if (!window.__booted) {
+        document.getElementById('loading').hidden = true;
+        document.getElementById('fallback-reason').textContent = 'The 3D library took too long to load. Please check your internet connection.';
+        document.getElementById('fallback').hidden = false;
+      }
+    }, 20000);
+  </script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
