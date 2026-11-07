@@ -128,19 +128,19 @@ export const SONG_TITLES = Object.fromEntries(Object.entries(SONGS).map(([k, s])
 /** Names and short descriptions shown in the music picker. */
 export const SONG_INFO = {
   calm: {
-    name: 'Village Pond', vi: 'Ao Làng', icon: '🪷',
+    name: 'Village Pond', vi: 'Ao Làng',
     desc: 'Unhurried and gentle. A singing đàn bầu over a plucked zither, for everyday scenes.',
   },
   festival: {
-    name: 'Village Festival', vi: 'Hội Làng', icon: '🏮',
+    name: 'Village Festival', vi: 'Hội Làng',
     desc: 'Bright and bouncy. A bamboo flute leads, with clacking wood blocks and drums.',
   },
   battle: {
-    name: 'The Contest', vi: 'Tỉ Thí', icon: '🥁',
+    name: 'The Contest', vi: 'Tỉ Thí',
     desc: 'Fast and fierce. Rolling war drums, crashing cymbals and trembling strings.',
   },
   night: {
-    name: 'Moonlit Night', vi: 'Đêm Trăng', icon: '🌙',
+    name: 'Moonlit Night', vi: 'Đêm Trăng',
     desc: 'Slow and wistful. A low bamboo flute over a held drone, with crickets and a distant gong.',
   },
 };

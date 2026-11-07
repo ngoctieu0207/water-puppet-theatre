@@ -353,7 +353,7 @@ function renderMusicPickers() {
   document.querySelectorAll('.music-pick').forEach((wrap) => {
     const ctx = wrap.dataset.context;
     const options = ctx === 'story'
-      ? [['auto', { name: 'Auto', vi: 'Tự chọn', icon: '✨', desc: 'Picks the piece that fits your story: battle drums for a fight, a quiet tune for a sad night…' }], ...Object.entries(SONG_INFO)]
+      ? [['auto', { name: 'Auto', vi: 'Tự chọn', desc: 'Picks the piece that fits your story: battle drums for a fight, a quiet tune for a sad night…' }], ...Object.entries(SONG_INFO)]
       : Object.entries(SONG_INFO);
     wrap.innerHTML = '<div class="mp-head"><h3>Music</h3><span>Tap one to listen</span></div><div class="mp-list"></div>';
     const list = wrap.querySelector('.mp-list');

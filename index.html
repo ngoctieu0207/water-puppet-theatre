@@ -45,7 +45,7 @@
     <header class="landing-nav">
       <span class="brand">HÝ THỦY</span>
       <div class="nav-actions">
-        <button class="icon-btn js-sound" type="button" aria-pressed="true"><span class="ico" aria-hidden="true">♪</span><span class="lbl">Sound on</span></button>
+        <button class="icon-btn js-sound" type="button" aria-pressed="true"><span class="lbl">Sound on</span></button>
         <button class="btn btn--primary btn--sm js-enter" type="button">Enter the theatre</button>
       </div>
     </header>
@@ -57,7 +57,7 @@
       <p class="lede">Hý Thủy (戲水) means “playing in the water”, capturing the joy and playfulness of movement on the water. Inspired by Vietnam's traditional water puppetry, Hý Thủy is an interactive digital stage where you can explore the art of water puppetry, discover its characters, and bring wooden puppets to life through your own performances.</p>
       <div class="landing-actions">
         <button class="btn btn--primary btn--lg js-enter" type="button">Enter the theatre</button>
-        <a class="btn btn--ghost" href="#about">What is water puppetry? ↓</a>
+        <a class="btn btn--ghost" href="#about">What is water puppetry?</a>
       </div>
     </section>
 
@@ -85,12 +85,10 @@
       <h2 id="modes-title">How would you like to perform?</h2>
       <div class="mode-grid">
         <button id="mode-play" class="mode-card" type="button">
-          <span class="mode-ico" aria-hidden="true">🎮</span>
           <span class="mode-title">Be the puppeteer</span>
           <span class="mode-desc">Choose a puppet and move it yourself with the keyboard or on-screen controls. A short tutorial shows you how.</span>
         </button>
         <button id="mode-story" class="mode-card" type="button">
-          <span class="mode-ico" aria-hidden="true">📜</span>
           <span class="mode-title">Tell a story</span>
           <span class="mode-desc">Type a short script and the puppets act it out on the water, with music to match the mood.</span>
         </button>
@@ -165,9 +163,9 @@
         <span id="hud-mode" class="badge">Tutorial</span>
       </div>
       <div class="hud-buttons" role="toolbar" aria-label="Show controls">
-        <button id="btn-reset" class="hud-btn" type="button"><span aria-hidden="true">↺</span><span class="lbl">Reset</span></button>
-        <button class="hud-btn js-sound" type="button" aria-pressed="true"><span class="ico" aria-hidden="true">♪</span><span class="lbl">Sound on</span></button>
-        <button id="btn-pause" class="hud-btn" type="button"><span aria-hidden="true">❚❚</span><span class="lbl">Pause</span></button>
+        <button id="btn-reset" class="hud-btn" type="button"><span class="lbl">Reset</span></button>
+        <button class="hud-btn js-sound" type="button" aria-pressed="true"><span class="lbl">Sound on</span></button>
+        <button id="btn-pause" class="hud-btn" type="button"><span class="lbl">Pause</span></button>
       </div>
     </div>
     <div id="toast" class="toast" aria-live="polite"></div>
@@ -216,9 +214,8 @@
       <!-- Left thumb: moving -->
       <div class="touch-left" role="group" aria-label="Move">
         <div class="turn-row">
-          <div class="tctl"><button type="button" class="tbtn tbtn--sm" data-touch-key="ArrowLeft" aria-label="Turn left"><svg viewBox="0 0 24 24"><path d="M4 4v5h5"/><path d="M4.7 9A8 8 0 1 1 6 16.5"/></svg></button></div>
-          <span class="tlabel">Turn</span>
-          <div class="tctl"><button type="button" class="tbtn tbtn--sm" data-touch-key="ArrowRight" aria-label="Turn right"><svg viewBox="0 0 24 24"><path d="M20 4v5h-5"/><path d="M19.3 9A8 8 0 1 0 18 16.5"/></svg></button></div>
+          <button type="button" class="tbtn tbtn--pill" data-touch-key="ArrowLeft" aria-label="Turn left">Turn left</button>
+          <button type="button" class="tbtn tbtn--pill" data-touch-key="ArrowRight" aria-label="Turn right">Turn right</button>
         </div>
         <div class="joystick" role="application" aria-label="Glide joystick: drag to move the puppet">
           <div class="joystick-ring" aria-hidden="true"></div>
@@ -230,14 +227,14 @@
       <!-- Right thumb: height + actions -->
       <div class="touch-right">
         <div class="rocker" role="group" aria-label="Height">
-          <button type="button" class="rocker-btn" data-touch-key="ArrowUp" aria-label="Rise"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg><span>Rise</span></button>
-          <button type="button" class="rocker-btn" data-touch-key="ArrowDown" aria-label="Sink"><span>Sink</span><svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></button>
+          <button type="button" class="rocker-btn" data-touch-key="ArrowUp" aria-label="Rise"><span>Rise</span></button>
+          <button type="button" class="rocker-btn" data-touch-key="ArrowDown" aria-label="Sink"><span>Sink</span></button>
         </div>
         <div class="diamond" role="group" aria-label="Actions">
-          <div class="tctl d-top"><button type="button" class="tbtn tbtn--gold" data-touch-key="KeyE" aria-label="Signature move"><svg viewBox="0 0 24 24"><path d="M12 3l2.1 5.9L20 11l-5.9 2.1L12 19l-2.1-5.9L4 11l5.9-2.1z"/></svg></button><span class="tlabel">Signature</span></div>
-          <div class="tctl d-left"><button type="button" class="tbtn" data-touch-key="KeyQ" aria-label="Greet"><svg viewBox="0 0 24 24"><path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12M11 11V5a1.5 1.5 0 0 1 3 0v6M14 11V6.5a1.5 1.5 0 0 1 3 0V14a6 6 0 0 1-6 6h-.5a5 5 0 0 1-4.1-2.2L4.3 14.6a1.5 1.5 0 0 1 2.4-1.8L8 14.5"/></svg></button><span class="tlabel">Greet</span></div>
-          <div class="tctl d-right"><button type="button" class="tbtn" data-touch-key="KeyF" aria-label="Dive"><svg viewBox="0 0 24 24"><path d="M12 3v10M7.5 9l4.5 4.5L16.5 9"/><path d="M3 19c1.5-1.2 3-1.2 4.5 0s3 1.2 4.5 0 3-1.2 4.5 0 3 1.2 4.5 0"/></svg></button><span class="tlabel">Dive</span></div>
-          <div class="tctl d-bottom"><button type="button" class="tbtn tbtn--jump" data-touch-key="Space" aria-label="Jump"><svg viewBox="0 0 24 24"><path d="M12 15V4M7.5 8.5L12 4l4.5 4.5"/><path d="M3 20c1.5-1.2 3-1.2 4.5 0s3 1.2 4.5 0 3-1.2 4.5 0 3 1.2 4.5 0"/></svg></button><span class="tlabel">Jump</span></div>
+          <div class="tctl d-top"><button type="button" class="tbtn tbtn--gold" data-touch-key="KeyE" aria-label="Signature move">Signature</button></div>
+          <div class="tctl d-left"><button type="button" class="tbtn" data-touch-key="KeyQ" aria-label="Greet">Greet</button></div>
+          <div class="tctl d-right"><button type="button" class="tbtn" data-touch-key="KeyF" aria-label="Dive">Dive</button></div>
+          <div class="tctl d-bottom"><button type="button" class="tbtn tbtn--jump" data-touch-key="Space" aria-label="Jump">Jump</button></div>
         </div>
       </div>
     </div>

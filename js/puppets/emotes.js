@@ -34,7 +34,7 @@ export const EMOTES = {
     },
   },
   love: {
-    label: 'Love ♥',
+    label: 'Love',
     duration: 3.2,
     hearts: [0.4, 1.0, 1.6, 2.2],
     pose(u, t, s) {
