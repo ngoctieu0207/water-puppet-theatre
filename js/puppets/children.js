@@ -30,8 +30,9 @@ function buildChild(kind) {
   const white = new THREE.MeshStandardMaterial({ color: 0xfaf6ee, roughness: 0.4 });
   const blush = new THREE.MeshStandardMaterial({ color: 0xf2a49a, roughness: 0.6, transparent: true, opacity: girl ? 0.95 : 0.8 });
   const joint = new THREE.MeshStandardMaterial({ color: 0x5a3a2a, roughness: 0.6 });
-  const clothA = lacquer(girl ? 0xc8361f : 0x8e2414, { roughness: 0.5, clearcoat: 0.4 });  // yếm / khố
-  const clothB = lacquer(girl ? 0x1f5a3c : 0x8e2414, { roughness: 0.55, clearcoat: 0.3 }); // skirt / khố
+  const clothA = lacquer(girl ? 0xb8221a : 0x8e2414, { roughness: 0.45, clearcoat: 0.6 });  // girl's top / khố
+  const clothB = lacquer(girl ? 0x16120f : 0x8e2414, { roughness: 0.5, clearcoat: 0.5 });  // girl's black skirt / khố
+  const sash = lacquer(0x1f8a4c, { roughness: 0.4, clearcoat: 0.7 });                       // girl's green sash
 
   const root = new THREE.Group();
   const spin = new THREE.Group();
@@ -48,7 +49,8 @@ function buildChild(kind) {
   body.position.y = 0.55;
   spin.add(body);
   const bellyR = girl ? 0.36 : 0.43;
-  const bellyMesh = shadowed(new THREE.Mesh(new THREE.SphereGeometry(bellyR, 32, 24), tummy));
+  // The girl wears a full red top over chest and tummy (like the lacquered village-girl puppets)
+  const bellyMesh = shadowed(new THREE.Mesh(new THREE.SphereGeometry(bellyR, 32, 24), girl ? clothA : tummy));
   bellyMesh.position.set(0, 0.32, girl ? 0.0 : 0.03);
   body.add(bellyMesh);
   if (!girl) {
@@ -56,32 +58,44 @@ function buildChild(kind) {
     navel.position.set(0, -0.06, bellyR);
     bellyMesh.add(navel);
   }
-  const chest = shadowed(new THREE.Mesh(new THREE.SphereGeometry(girl ? 0.3 : 0.34, 28, 20), skin));
+  const chest = shadowed(new THREE.Mesh(new THREE.SphereGeometry(girl ? 0.3 : 0.34, 28, 20), girl ? clothA : skin));
   chest.position.set(0, 0.62, -0.02);
   chest.scale.set(1.08, 0.9, 0.95);
   body.add(chest);
 
   if (girl) {
-    // Yếm: a red bodice, drawn as a rounded diamond over chest and tummy, with gold edging
-    const yem = shadowed(new THREE.Mesh(new THREE.BoxGeometry(0.42, 0.42, 0.04), clothA));
-    yem.position.set(0, 0.47, 0.33);
-    yem.rotation.set(-0.12, 0, Math.PI / 4);
-    body.add(yem);
-    const edge = new THREE.Mesh(new THREE.TorusGeometry(0.3, 0.012, 6, 4), gold);
-    edge.position.set(0, 0.47, 0.355);
-    edge.rotation.set(-0.12, 0, 0);
-    body.add(edge);
-    const tie = new THREE.Mesh(new THREE.TorusGeometry(0.2, 0.012, 6, 24), clothA);
-    tie.position.set(0, 0.74, 0.02);
-    tie.rotation.x = Math.PI / 2 - 0.3;
-    body.add(tie);
-    // Long wrap skirt (váy) down into the water
+    // Gold collar and gold shoulder panels, like a short waistcoat over the red top
+    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.035, 8, 24), gold);
+    collar.rotation.x = Math.PI / 2 - 0.15;
+    collar.position.set(0, 0.84, 0.0);
+    body.add(collar);
+    // Sphere slices over each side of the chest (phi π/2 is the front, 0 and π are the sides),
+    // so the red stays in front and gold runs down both sides and over the shoulders.
+    for (const phiStart of [Math.PI * 0.78, Math.PI * 1.78]) {
+      const panel = shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.308, 20, 16, phiStart, Math.PI * 0.44, 0, Math.PI * 0.64), gold));
+      panel.position.copy(chest.position);
+      panel.scale.copy(chest.scale);
+      body.add(panel);
+    }
+    // Green sash tied at the waist, with a knot in front
+    const sashBand = shadowed(new THREE.Mesh(new THREE.TorusGeometry(0.355, 0.055, 10, 36), sash));
+    sashBand.rotation.x = Math.PI / 2; sashBand.position.y = 0.17;
+    sashBand.scale.set(1, 1, 1.4);
+    body.add(sashBand);
+    const knot = shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.07, 12, 10), sash));
+    knot.position.set(0, 0.15, 0.37);
+    knot.scale.set(1.3, 0.9, 0.6);
+    body.add(knot);
+    for (const sx of [-1, 1]) {
+      const tail = shadowed(new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.2, 0.02), sash));
+      tail.position.set(sx * 0.05, 0.03, 0.375);
+      tail.rotation.z = sx * 0.18;
+      body.add(tail);
+    }
+    // Long black wrap skirt down into the water
     const skirt = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(0.37, 0.46, 0.55, 28, 1, true), clothB));
     skirt.position.y = -0.08;
     body.add(skirt);
-    const band = new THREE.Mesh(new THREE.TorusGeometry(0.37, 0.028, 8, 32), gold);
-    band.rotation.x = Math.PI / 2; band.position.y = 0.19;
-    body.add(band);
   } else {
     // Khố: loincloth with gold waistband and front flap
     const wrap = shadowed(new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.45, 0.26, 28, 1, true), clothA));
@@ -168,7 +182,7 @@ function buildChild(kind) {
     const shoulder = new THREE.Group();
     shoulder.position.set(sx * (girl ? 0.33 : 0.37), 0.66, 0);
     body.add(shoulder);
-    shoulder.add(new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 10), skin));
+    shoulder.add(new THREE.Mesh(new THREE.SphereGeometry(girl ? 0.095 : 0.085, 12, 10), girl ? gold : skin));
     const upper = shadowed(new THREE.Mesh(new THREE.CapsuleGeometry(girl ? 0.065 : 0.075, 0.2, 6, 12), skin));
     upper.position.y = -0.16;
     shoulder.add(upper);
@@ -402,7 +416,7 @@ export const girl = {
   id: 'girl',
   name: 'Cô Bé',
   nameEn: 'The Girl',
-  blurb: 'A village girl in a red yếm with her hair in two buns, quick to toss water at the sky.',
+  blurb: 'A village girl in a red and gold top with a green sash, her hair in two buns, quick to toss water at the sky.',
   signature: 'Water toss and twirl',
   build: () => buildChild('girl'),
   idle: girlIdle,
