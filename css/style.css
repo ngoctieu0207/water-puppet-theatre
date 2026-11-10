@@ -99,13 +99,6 @@ dialog::backdrop { background: rgba(10, 6, 4, 0.7); backdrop-filter: blur(2px); 
 /* ---------- Landing ---------- */
 .landing-inner { max-width: 520px; }
 .eyebrow { color: var(--gold); letter-spacing: 0.14em; text-transform: uppercase; font-size: 0.8rem; font-weight: 700; margin-bottom: 0.4em; }
-#landing-title {
-  font-size: clamp(2.8rem, 7vw, 5.2rem);
-  font-weight: 800;
-  color: var(--cream);
-  text-shadow: 0 2px 0 var(--lacquer), 0 0 30px rgba(224, 173, 75, 0.35);
-  margin: 0;
-}
 .subtitle { font-family: var(--font-display); font-style: italic; font-size: 1.35rem; color: var(--gold-soft); margin-bottom: 1.2em; }
 .lede { font-size: 1.05rem; color: #efe1c6; max-width: 46ch; }
 .landing-actions { display: flex; flex-wrap: wrap; gap: 12px; margin: 1.6em 0 1em; }
@@ -318,10 +311,11 @@ kbd.pressed {
   background: linear-gradient(90deg, rgba(14, 8, 6, 0.9) 0%, rgba(14, 8, 6, 0.65) 40%, rgba(14, 8, 6, 0) 70%);
 }
 .hero > * { max-width: 560px; }
+/* Plain title: modest size, no glow */
 #landing-title {
-  font-size: clamp(2.6rem, 6.5vw, 5rem);
-  font-weight: 800; color: var(--cream); margin: 0;
-  text-shadow: 0 2px 0 var(--lacquer), 0 0 30px rgba(224, 173, 75, 0.35);
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 700; color: var(--cream); margin: 0 0 0.6em;
+  letter-spacing: 0.01em;
 }
 .btn--lg { font-size: 1.1rem; padding: 0.85em 1.8em; }
 a.btn { text-decoration: none; display: inline-flex; align-items: center; }
