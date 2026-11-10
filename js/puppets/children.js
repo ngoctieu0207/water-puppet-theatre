@@ -64,20 +64,7 @@ function buildChild(kind) {
   body.add(chest);
 
   if (girl) {
-    // Gold collar and gold shoulder panels, like a short waistcoat over the red top
-    const collar = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.035, 8, 24), gold);
-    collar.rotation.x = Math.PI / 2 - 0.15;
-    collar.position.set(0, 0.84, 0.0);
-    body.add(collar);
-    // Sphere slices over each side of the chest (phi π/2 is the front, 0 and π are the sides),
-    // so the red stays in front and gold runs down both sides and over the shoulders.
-    for (const phiStart of [Math.PI * 0.78, Math.PI * 1.78]) {
-      const panel = shadowed(new THREE.Mesh(new THREE.SphereGeometry(0.308, 20, 16, phiStart, Math.PI * 0.44, 0, Math.PI * 0.64), gold));
-      panel.position.copy(chest.position);
-      panel.scale.copy(chest.scale);
-      body.add(panel);
-    }
-    // Green sash tied at the waist, with a knot in front
+    // Plain red top (chest and tummy are red above); green sash tied at the waist, with a knot in front
     const sashBand = shadowed(new THREE.Mesh(new THREE.TorusGeometry(0.355, 0.055, 10, 36), sash));
     sashBand.rotation.x = Math.PI / 2; sashBand.position.y = 0.17;
     sashBand.scale.set(1, 1, 1.4);
@@ -182,7 +169,8 @@ function buildChild(kind) {
     const shoulder = new THREE.Group();
     shoulder.position.set(sx * (girl ? 0.33 : 0.37), 0.66, 0);
     body.add(shoulder);
-    shoulder.add(new THREE.Mesh(new THREE.SphereGeometry(girl ? 0.095 : 0.085, 12, 10), girl ? gold : skin));
+    // bare shoulders: the girl's top is sleeveless
+    shoulder.add(new THREE.Mesh(new THREE.SphereGeometry(0.085, 12, 10), skin));
     const upper = shadowed(new THREE.Mesh(new THREE.CapsuleGeometry(girl ? 0.065 : 0.075, 0.2, 6, 12), skin));
     upper.position.y = -0.16;
     shoulder.add(upper);
@@ -416,7 +404,7 @@ export const girl = {
   id: 'girl',
   name: 'Cô Bé',
   nameEn: 'The Girl',
-  blurb: 'A village girl in a red and gold top with a green sash, her hair in two buns, quick to toss water at the sky.',
+  blurb: 'A village girl in a sleeveless red top with a green sash, her hair in two buns, quick to toss water at the sky.',
   signature: 'Water toss and twirl',
   build: () => buildChild('girl'),
   idle: girlIdle,
